@@ -148,7 +148,7 @@ const HouseModel = forwardRef(
         <group>
           <line geometry={lineGeometry}>
             <lineBasicMaterial
-              color="#00a8ff" // Azul moderno y vibrante
+              color="#90caf9" // Azul claro para el modo oscuro
               linewidth={3} // Aumenté un poco el grosor para mejor visibilidad
               transparent={true}
               opacity={0.9} // Aumenté la opacidad para que se vea más sólido
