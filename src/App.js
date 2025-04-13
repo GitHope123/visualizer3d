@@ -52,11 +52,17 @@ export default function App() {
     offsetY: 0.4,
     alwaysVisible: false,
   });
+  const [isDarkMode, setIsDarkMode] = useState(false); // <-- Add dark mode state
 
   // Refs
   const controlsRef = useRef();
   const boundsRef = useRef();
   const notificationTimeoutRef = useRef();
+
+  // Toggle Dark Mode function
+  const toggleDarkMode = useCallback(() => {
+    setIsDarkMode(prev => !prev);
+  }, []);
 
   // Load saved parts from localStorage
   useEffect(() => {
@@ -196,9 +202,11 @@ export default function App() {
   }, []);
 
   return (
-    <Container fluid className="vh-100 d-flex flex-column p-0">
+    // Add conditional class for dark mode at the root level if needed for global styles
+    <Container fluid className={`vh-100 d-flex flex-column p-0 ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
       {/* Navbar */}
-      <nav className="navbar navbar-dark bg-primary py-2">
+      {/* Navbar styling might need adjustment for dark mode */}
+      <nav className={`navbar navbar-dark ${isDarkMode ? 'bg-dark' : 'bg-primary'} py-2`}>
         <Container fluid>
           <span className="navbar-brand d-flex align-items-center gap-2">
             <i className="bi bi-house-door-fill"></i>
@@ -262,10 +270,11 @@ export default function App() {
                   panelBackground: '#ffffff',
                   panelOpacity: 0.8
                 }}
-                showTextLabels={true} // Añade esta nueva propiedad
+                showTextLabels={true}
+                isDarkMode={isDarkMode} // <-- Pass isDarkMode prop
               />
             </Bounds>
-            {/* que muestre las etiquetas registradas de las partes en una caja de texto en el plano */}
+
             <OrbitControls
               ref={controlsRef}
               makeDefault
@@ -293,6 +302,8 @@ export default function App() {
           resetView={resetView}
           labelSettings={labelSettings}
           setLabelSettings={setLabelSettings}
+          isDarkMode={isDarkMode}       // <-- Pass isDarkMode prop
+          toggleDarkMode={toggleDarkMode} // <-- Pass toggleDarkMode prop
         />
       </Row>
 
@@ -320,11 +331,14 @@ export default function App() {
       <Modal
         show={showRegisterModal}
         onHide={() => setShowRegisterModal(false)}
+        // Add backdropClassName for potential dark mode styling
+        backdropClassName={isDarkMode ? 'dark-modal-backdrop' : ''} 
+        dialogClassName={isDarkMode ? 'dark-modal' : ''} // Add dialogClassName for dark mode
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className={isDarkMode ? 'bg-dark text-light' : ''}>
           <Modal.Title>Register New Part</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className={isDarkMode ? 'bg-dark text-light' : ''}>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Part Name</Form.Label>
@@ -334,16 +348,17 @@ export default function App() {
                 value={partName}
                 onChange={(e) => setPartName(e.target.value)}
                 autoFocus
+                className={isDarkMode ? 'bg-secondary text-light' : ''}
               />
-              <Form.Text className="text-muted">
+              <Form.Text className={isDarkMode ? 'text-light' : 'text-muted'}>
                 Selected part: {selectedPart}
               </Form.Text>
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className={isDarkMode ? 'bg-dark text-light' : ''}>
           <Button
-            variant="secondary"
+            variant={isDarkMode ? "outline-light" : "secondary"}
             onClick={() => setShowRegisterModal(false)}
           >
             Cancel
@@ -359,11 +374,13 @@ export default function App() {
         show={showPartsModal}
         onHide={() => setShowPartsModal(false)}
         size="lg"
+        backdropClassName={isDarkMode ? 'dark-modal-backdrop' : ''}
+        dialogClassName={isDarkMode ? 'dark-modal' : ''}
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className={isDarkMode ? 'bg-dark text-light' : ''}>
           <Modal.Title>Selected Parts ({selectedParts.length})</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className={isDarkMode ? 'bg-dark text-light' : ''}>
           <div className="d-flex flex-wrap gap-2">
             {selectedParts.map((part, index) => (
               <Badge key={index} bg="primary" pill className="fs-6 p-2">
@@ -372,8 +389,8 @@ export default function App() {
             ))}
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowPartsModal(false)}>
+        <Modal.Footer className={isDarkMode ? 'bg-dark text-light' : ''}>
+          <Button variant={isDarkMode ? "outline-light" : "secondary"} onClick={() => setShowPartsModal(false)}>
             Close
           </Button>
         </Modal.Footer>
